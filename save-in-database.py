@@ -2,25 +2,16 @@ import glob
 import os
 import json
 import requests
+import concurrent.futures
 
 # Define the path to the output folder
 PATH_OUTPUT = "output"
-URL_DATABASE = "http://lectorium:lectorium@database:5984"
-
-file_patterns = [
-    os.path.join(PATH_OUTPUT, "*.db.track.json"),
-    os.path.join(PATH_OUTPUT, "*.db.transcript.*.json")
-]
-
-all_files = []
-for pattern in file_patterns:
-    all_files.extend(glob.glob(pattern))
 
 
-for file_path in all_files:
+def save_file(file_path: str):
     with open(file_path, 'r') as file:
         data = json.load(file)
-        _id = data.get('_id').replace("/", "%2F")
+        _id = data.get('_id')
         url = f"{URL_DATABASE}/library/{_id}"
 
         response = requests.get(url)
@@ -31,7 +22,7 @@ for file_path in all_files:
             saving_data = {**data, "_rev": revision}
             if (stored_data == saving_data):
                 print(f"Data for {_id} is up to date")
-                continue
+                return
 
         if revision is None:
             response = requests.put(url, json=data)
@@ -42,3 +33,22 @@ for file_path in all_files:
             print(f"Successfully updated data for {_id}")
         else:
             print(f"Failed to update data for {_id}: {response.text}")
+
+
+if __name__ == "__main__":
+    # get list of files to upload
+    all_files = []
+    file_patterns = [
+        os.path.join(PATH_OUTPUT, "*.db.track.json"),
+        os.path.join(PATH_OUTPUT, "*.db.transcript.*.json")
+    ]
+    for pattern in file_patterns:
+        all_files.extend(glob.glob(pattern))
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=15) as executor:
+        futures = [
+            executor.submit(
+                save_file,
+                file,
+            ) for file in all_files
+        ]
