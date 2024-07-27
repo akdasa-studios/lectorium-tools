@@ -1,11 +1,15 @@
+import os
+import json
+
 from dataclasses import dataclass, field
 from sys import argv
 from datetime import date
-import os
 
-from db import LOCATIONS, SOURCES
-import re
-import json
+from modules.meta import (
+    extract_location, extract_author, extract_id, extract_date,
+    extract_references, extract_title, extract_language, extract_file_size,
+    extract_duration
+)
 
 
 PATH_INPUT = argv[1] if len(argv) > 1 else "input"
@@ -19,135 +23,52 @@ class FileInfo:
     location: str = ""
     date = date.min
     references: list[str] = field(default_factory=list)
-    warnings: list[str] = field(default_factory=list)
     original_references: str = ""
+    author: str = ""
+    languages: list[str] = field(default_factory=list)
+    file_size: int = 0
+    duration: int = 0
 
-def process_directory(directory):
-    result: list[FileInfo] = []
-    for file_name in os.listdir(directory):
-        result.append(process_file_name(file_name))
-    return result
 
-def process_file_name(file_name: str) -> FileInfo:
+def process_file(
+    file_name: str,
+    path: str,
+) -> FileInfo:
+    print(f"Processing {file_name}")
     file_info = FileInfo()
 
     file_info.file_name  = file_name
-    file_info.id         = extract_id(file_name, file_info)
-    file_info.location   = extract_location(file_name, file_info)
-    file_info.date       = extract_date(file_name, file_info)
-    file_info.references = extract_references(file_name, file_info)
-    file_info.title      = extract_title(file_name, file_info)
+    file_info.id                           = extract_id(os.path.join(path, file_name))
+    file_info.location,   token_location   = extract_location(file_name)
+    file_info.date,       token_date       = extract_date(os.path.join(path, file_name))
+    file_info.references, token_reference  = extract_references(file_name)
+    file_info.author,     token_author     = extract_author(path)
+    file_info.file_size                    = extract_file_size(os.path.join(path, file_name))
+    file_info.duration                     = extract_duration(os.path.join(path, file_name))
+    file_info.languages                    = [extract_language(path)]
+
+    file_info.title                        = extract_title(file_name, [
+        file_info.id, token_location, token_date, token_reference, ".mp3"
+    ]) or f"{token_location} {file_info.date.strftime('%Y-%m-%d')}"
 
     return file_info
 
-def extract_id(input: str, file_info: FileInfo):
-    return input.split(" ")[0]
 
-def extract_title(input: str, file_info: FileInfo):
-    result = input
+def process_dir(
+    path: str,
+) -> list[FileInfo]:
+    result: list[FileInfo] = []
 
-    for location_names in LOCATIONS:
-        for location_name in location_names:
-            result = result.replace(location_name, "")
-
-    date_patterns = [
-        "%d.%m.%Y"
-    ]
-    for date_pattern in date_patterns:
-        result = result.replace(file_info.date.strftime(date_pattern), "")
-
-
-    result = result.replace(file_info.id, "")
-    result = result.replace(file_info.original_references, "")
-    result = result.replace(".mp3", "")
-    result = result.replace("  ", " ")
-    result = result.strip()
-
-    if not result:
-        # file_info.warnings.append("No title found")
-        result = file_info.location + " " + file_info.date.strftime("%d/%m/%y")
+    for item in os.listdir(path):
+        item_full_path = os.path.join(path, item)
+        if os.path.isdir(item_full_path):
+            file_infos = process_dir(item_full_path)
+            result.extend(file_infos)
+        else:
+            result.append(process_file(item, path))
 
     return result
 
-
-def extract_location(input: str, file_info: FileInfo):
-    for location_names in LOCATIONS:
-        canonical_name = location_names[0]
-        for location_name in location_names:
-            if location_name in input:
-                return canonical_name
-    file_info.warnings.append("No location found")
-
-
-def extract_date(input: str, file_info: FileInfo) -> date:
-    date_patterns = [
-        r"(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})"
-    ]
-    for pattern in date_patterns:
-        try:
-            match = re.search(pattern, input)
-            if match:
-                day = int(match.group("day"))
-                month = int(match.group("month"))
-                year = int(match.group("year"))
-
-                if day == 0:
-                    day = 1 # TODO: Add warning
-
-                return date(year, month, day)
-        except:
-            pass
-    file_info.warnings.append("No date found")
-    return date.min
-
-
-def extract_references(input: str, file_info: FileInfo) -> list[str]:
-    patterns = [
-        r"(?P<name>\w+)\s(?P<part1>\d{2})\.(?P<part2>\d{2}-\d{2})",
-        r"(?P<name>\w+)\s(?P<part1>\d{2})\.(?P<part2>\d{2})"
-        # r"(?P<name>\w+)\s(?P<part1>\d{2})\.(?P<part2>\d{2}-\d{2})",
-        # r"(?P<name>\w+)\s(?P<part1>\d{2})\.(?P<part2>\d{2})"
-    ]
-    for pattern in patterns:
-        try:
-            match = re.search(pattern, input)
-            if match:
-                file_info.original_references = match.group(0)
-                source = extract_source(match.group("name"), file_info)
-                return [
-                    [
-                        source,
-                        int(match.group("part1")) if match.group("part1").isnumeric() else match.group("part1"),
-                        int(match.group("part2")) if match.group("part2").isnumeric() else match.group("part2"),
-                    ]
-                ]
-
-
-
-                # part1 = int(match.group("part1"))
-                # part2 = match.group("part2")
-                # if "-" in part2:
-                #     tokens = list(map(int, part2.split("-")))
-                #     return [
-                #         [source, int(part1), tokens[0]]
-                #     ]
-                # else:
-                #     return [
-                #         [source, int(part1), int(part2)]
-                #     ]
-        except Exception as e:
-            pass
-
-    file_info.warnings.append("No reference found")
-    return [[]]
-
-def extract_source(input: str, file_info: FileInfo):
-    for source_names in SOURCES:
-        canonical_name = source_names[0]
-        for source_name in source_names:
-            if source_name.lower() == input.lower().strip():
-                return canonical_name
-    file_info.warnings.append("No source found")
 
 def save_output(file_info: FileInfo):
     file_name = f"{PATH_OUTPUT}/{file_info.id}.meta.json"
@@ -156,28 +77,20 @@ def save_output(file_info: FileInfo):
             {
                 "id": file_info.id,
                 "title": file_info.title,
+                "author": file_info.author,
                 "location": file_info.location,
                 "date": file_info.date.strftime("%Y%m%d"),
-                "references": file_info.references
+                "file_size": file_info.file_size,
+                "duration": file_info.duration,
+                "references": file_info.references,
+                "languages": file_info.languages,
             },
             file,
             ensure_ascii=False,
-            indent=4)
+            indent=2
+        )
 
-
-
-results = process_directory(PATH_INPUT)
-errors_count = 0
-
-for file_info in results:
-    if not file_info.warnings:
+if __name__ == "__main__":
+    results = process_dir(PATH_INPUT)
+    for file_info in results:
         save_output(file_info)
-        continue
-
-    print(file_info.file_name)
-    for warning in file_info.warnings:
-        print("  ", warning)
-        errors_count += 1
-
-
-print(f"Errors found {errors_count} in {len(results)} files")

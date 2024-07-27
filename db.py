@@ -35,3 +35,11 @@ LOCATIONS = [
 SOURCES = [
     ['BG', 'бг']
 ]
+
+AUTHORS = [
+    ['ACBSP', 'Шрила Прабхупада'],
+]
+
+LANGUAGES = [
+    ['ru', 'русский'],
+]

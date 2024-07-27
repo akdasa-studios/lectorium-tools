@@ -5,11 +5,11 @@ import requests
 
 # Define the path to the output folder
 PATH_OUTPUT = "output"
-URL_DATABASE = "http://lectorium:lectorium@lectorium-db:5984"
+URL_DATABASE = "http://lectorium:lectorium@database:5984"
 
 file_patterns = [
     os.path.join(PATH_OUTPUT, "*.db.track.json"),
-    os.path.join(PATH_OUTPUT, "*.db.transcript.json")
+    os.path.join(PATH_OUTPUT, "*.db.transcript.*.json")
 ]
 
 all_files = []
