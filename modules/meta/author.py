@@ -2,11 +2,19 @@ from dataclasses import dataclass
 
 @dataclass
 class Author:
-    name: str
+    code: str
     aliases: list[str]
+    canonical_names: dict[str, str]
 
 AUTHORS: list[Author] = [
-    Author(name='ACBSP', aliases=['Шрила Прабхупада']),
+    Author(
+        code='acbsp',
+        aliases=['Шрила Прабхупада'],
+        canonical_names = {
+            'en': 'A. C. Bhaktivedanta Swami Prabhupada',
+            'ru': 'А. Ч. Бхактиведанта Свами Прабхупада',
+        }
+    ),
 ]
 
 def extract_author(
@@ -19,5 +27,5 @@ def extract_author(
     for author in AUTHORS:
         for alias in author.aliases:
             if alias in path:
-                return (author.name, alias)
+                return (author.code, alias)
     raise Exception(f"Author not found in path {path}")

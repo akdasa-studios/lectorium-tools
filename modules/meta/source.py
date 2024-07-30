@@ -2,11 +2,18 @@ from dataclasses import dataclass
 
 @dataclass
 class Source:
-    name: str
+    code: str
     aliases: list[str]
+    canonical_names: dict[str, dict[str, str]]
 
 SOURCES: list[Source] = [
-    Source(name='BG', aliases=['БГ', 'Бхагавад-гита', 'Бхагавад гита']),
+    Source(
+        code='bg',
+        aliases=['БГ', 'Бхагавад-гита', 'Бхагавад гита'],
+        canonical_names={
+            'en': { "full": 'Bhagavad Gita', "short": 'BG' },
+            'ru': { "full": 'Бхагавад-гита', "short": 'БГ' },
+        }),
 ]
 
 def extract_source(
@@ -14,9 +21,9 @@ def extract_source(
 ) -> str:
     """
     Extract source from path based on the source names and returns
-    it's canonical name. Otherwise raises an exception.
+    it's canonical code. Otherwise raises an exception.
     """
     for source in SOURCES:
         if any(alias in path for alias in source.aliases):
-            return source.name
+            return source.code
     raise Exception(f"Source not found in path {path}")
