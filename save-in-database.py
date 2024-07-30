@@ -40,7 +40,10 @@ if __name__ == "__main__":
     all_files = []
     file_patterns = [
         os.path.join(PATH_OUTPUT, "*.db.track.json"),
-        os.path.join(PATH_OUTPUT, "*.db.transcript.*.json")
+        os.path.join(PATH_OUTPUT, "*.db.transcript.*.json"),
+        os.path.join(PATH_OUTPUT, "*.db.author.json"),
+        os.path.join(PATH_OUTPUT, "*.db.location.json"),
+        os.path.join(PATH_OUTPUT, "*.db.source.json"),
     ]
     for pattern in file_patterns:
         all_files.extend(glob.glob(pattern))

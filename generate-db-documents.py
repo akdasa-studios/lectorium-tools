@@ -4,8 +4,7 @@ import json
 from sys import argv
 import json
 
-from db import LANGUAGES
-from modules.meta import extract_id
+from modules.meta import extract_id, AUTHORS, LOCATIONS, SOURCES
 
 PATH_INPUT  = argv[1] if len(argv) > 1 else "input"
 PATH_OUTPUT = argv[2] if len(argv) > 1 else "output"
@@ -14,6 +13,9 @@ PATH_POSTFIX_META_URL      = "meta.url"
 PATH_POSTFIX_DEEPGRAM      = "deepgram"
 PATH_POSTFIX_DB_TRACK      = "db.track"
 PATH_POSTFIX_DB_TRANSCRIPT = "db.transcript"
+PATH_POSTFIX_DB_AUTHOR     = "db.author"
+PATH_POSTFIX_DB_LOCATION   = "db.location"
+PATH_POSTFIX_DB_SOURCE     = "db.source"
 
 # ----------------
 # Helper functions
@@ -121,6 +123,49 @@ def process_dir(
         else:
             process_file(item_full_path)
 
+def process_static_data():
+    for author in AUTHORS:
+        file_author_output = os.path.join(PATH_OUTPUT, f"author.{author.code}.{PATH_POSTFIX_DB_AUTHOR}.json")
+        with open(file_author_output, 'w') as buffer_author_output:
+            data_author_output = {
+                "_id": f"author::{author.code}",
+                "name": {
+                    language: name
+                    for language, name in author.canonical_names.items()
+                },
+            }
+            buffer_author_output.write(
+                json.dumps(data_author_output, indent=2, ensure_ascii=False)
+            )
+
+    for location in LOCATIONS:
+        file_location_output = os.path.join(PATH_OUTPUT, f"location.{location.code}.{PATH_POSTFIX_DB_LOCATION}.json")
+        with open(file_location_output, 'w') as buffer_location_output:
+            data_location_output = {
+                "_id": f"location::{location.code}",
+                "name": {
+                    language: name
+                    for language, name in location.canonical_names.items()
+                },
+            }
+            buffer_location_output.write(
+                json.dumps(data_location_output, indent=2, ensure_ascii=False)
+            )
+
+    for source in SOURCES:
+        file_source_output = os.path.join(PATH_OUTPUT, f"source.{source.code}.{PATH_POSTFIX_DB_SOURCE}.json")
+        with open(file_source_output, 'w') as buffer_source_output:
+            data_source_output = {
+                "_id": f"source::{source.code}",
+                "name": {
+                    language: name
+                    for language, name in source.canonical_names.items()
+                },
+            }
+            buffer_source_output.write(
+                json.dumps(data_source_output, indent=2, ensure_ascii=False)
+            )
 
 if __name__ == "__main__":
     process_dir(PATH_INPUT)
+    process_static_data()
