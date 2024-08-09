@@ -8,6 +8,14 @@ class Location:
 
 LOCATIONS: list[Location] = [
     Location(
+        code='moskow',
+        aliases=['Moskow', 'Москва', 'Moscow'],
+        canonical_names={ 'en': 'Moscow', 'ru': 'Москва', }),
+    Location(
+        code='chicago',
+        aliases=['Чикаго'],
+        canonical_names={ 'en': 'Chicago', 'ru': 'Чикаго', }),
+    Location(
         code='london',
         aliases=['Лондон'],
         canonical_names={ 'en': 'London', 'ru': 'Лондон', }),
@@ -53,11 +61,11 @@ LOCATIONS: list[Location] = [
         canonical_names={'en': 'New York', 'ru': 'Нью Йорк'}),
     Location(
         code='los-angeles',
-        aliases=['Лос Анджелес'],
+        aliases=['Лос Анджелес', 'Лос-Анджелес'],
         canonical_names={'en': 'Los Angeles', 'ru': 'Лос Анджелес'}),
     Location(
         code='san-francisco',
-        aliases=['Сан Франциско', 'Сан Францыско'],
+        aliases=['Сан Франциско', 'Сан Францыско', 'Сан-Франциско'],
         canonical_names={'en': 'San Francisco', 'ru': 'Сан Франциско'}),
     Location(
         code='san-diego',
@@ -105,7 +113,7 @@ LOCATIONS: list[Location] = [
         canonical_names={'en': 'Hyderabad', 'ru': 'Хайдерабад'}),
     Location(
         code='hawaii',
-        aliases=['Гавайи'],
+        aliases=['Гавайи', 'Гаваи'],
         canonical_names={'en': 'Hawaii', 'ru': 'Гавайи'}),
     Location(
         code='johannesburg',
@@ -117,7 +125,7 @@ LOCATIONS: list[Location] = [
         canonical_names={'en': 'Nairobi', 'ru': 'Найроби'}),
     Location(
         code='new-delhi',
-        aliases=['Нью Дели', 'Нью-Дели'],
+        aliases=['Нью Дели', 'Нью-Дели', 'Дели'],
         canonical_names={'en': 'New Delhi', 'ru': 'Нью Дели'}),
     Location(
         code='miami',
@@ -159,6 +167,70 @@ LOCATIONS: list[Location] = [
         code='bombay',
         aliases=['Бомбей'],
         canonical_names={'en': 'Bombay', 'ru': 'Бомбей'}),
+    Location(
+        code='mayapur',
+        aliases=['Майапур'],
+        canonical_names={'en': 'Mayapur', 'ru': 'Майапур'}),
+    Location(
+        code='detroit',
+        aliases=['Детройт'],
+        canonical_names={'en': 'Detroit', 'ru': 'Детройт'}),
+    Location(
+        code='dallas',
+        aliases=['Даллас'],
+        canonical_names={'en': 'Dallas', 'ru': 'Даллас'}),
+    Location(
+        code='laguna-beach',
+        aliases=['Лагуна-Бич'],
+        canonical_names={'en': 'Laguna Beach', 'ru': 'Лагуна-Бич'}),
+    Location(
+        code='karakas',
+        aliases=['Каракас'],
+        canonical_names={'en': 'Karakas', 'ru': 'Каракас'}),
+    Location(
+        code='san-diego',
+        aliases=['Сан-Диего'],
+        canonical_names={'en': 'San Diego', 'ru': 'Сан Диего'}),
+    Location(
+        code='philadelphia',
+        aliases=['Филадельфия'],
+        canonical_names={'en': 'Philadelphia', 'ru': 'Филадельфия'}),
+    Location(
+        code='tirupati',
+        aliases=['Тирупати'],
+        canonical_names={'en': 'Tirupati', 'ru': 'Тирупати'}),
+    Location(
+        code='melbourne',
+        aliases=['Мельбурн'],
+        canonical_names={'en': 'Melbourne', 'ru': 'Мельбурн'}),
+    Location(
+        code='denver',
+        aliases=['Денвер'],
+        canonical_names={'en': 'Denver', 'ru': 'Денвер'}),
+    Location(
+        code='denver',
+        aliases=['Неллор'],
+        canonical_names={'en': 'Nellore', 'ru': 'Неллор'}),
+    Location(
+        code='boston',
+        aliases=['Бостон'],
+        canonical_names={'en': 'Boston', 'ru': 'Бостон'}),
+    Location(
+        code='new-orleans',
+        aliases=['Новый Орлеан'],
+        canonical_names={'en': 'New Orleans', 'ru': 'Новый Орлеан'}),
+    Location(
+        code='new-zealand',
+        aliases=['Новая Зеландия'],
+        canonical_names={'en': 'New Zealand', 'ru': 'Новая Зеландия'}),
+    Location(
+        code='montreal',
+        aliases=['Монреаль'],
+        canonical_names={'en': 'Montreal', 'ru': 'Монреаль'}),
+    Location(
+        code='tehran',
+        aliases=['Тегеран'],
+        canonical_names={'en': 'Tehran', 'ru': 'Тегеран'}),
 ]
 
 def extract_location(

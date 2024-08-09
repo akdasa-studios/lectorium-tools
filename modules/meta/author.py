@@ -8,6 +8,14 @@ class Author:
 
 AUTHORS: list[Author] = [
     Author(
+        code='bcs',
+        aliases=['Bhakti Caitanya Swami'],
+        canonical_names = {
+            'en': 'Bhakti Caitanya Swami',
+            'ru': 'Бхакти Чайтанья Свами',
+        }
+    ),
+    Author(
         code='acbsp',
         aliases=['Шрила Прабхупада'],
         canonical_names = {

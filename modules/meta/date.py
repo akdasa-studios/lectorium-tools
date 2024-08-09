@@ -2,7 +2,8 @@ from re import search
 from datetime import date
 
 DATE_PATTERNS = [
-    r"(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})"
+    r"(?P<day>\d{2})\.(?P<month>\d{2})\.(?P<year>\d{4})",
+    r"(?P<year>\d{4})\-(?P<month>\d{2})\-(?P<day>\d{2})",
 ]
 
 def extract_date(

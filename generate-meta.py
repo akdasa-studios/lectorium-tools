@@ -12,11 +12,12 @@ from modules.meta import (
 )
 
 
-PATH_INPUT = argv[1] if len(argv) > 1 else "input"
-PATH_OUTPUT = argv[2] if len(argv) > 1 else "output"
+PATH_INPUT = "input"
+PATH_OUTPUT = "output"
 
 @dataclass
 class FileInfo:
+    path: str = ""
     file_name: str = ""
     id: str = ""
     title: str = ""
@@ -37,7 +38,8 @@ def process_file(
     print(f"Processing {file_name}")
     file_info = FileInfo()
 
-    file_info.file_name  = file_name
+    file_info.path                         = os.path.join(path, file_name)
+    file_info.file_name                    = file_name
     file_info.id                           = extract_id(os.path.join(path, file_name))
     file_info.location,   token_location   = extract_location(file_name)
     file_info.date,       token_date       = extract_date(os.path.join(path, file_name))
@@ -45,7 +47,7 @@ def process_file(
     file_info.author,     token_author     = extract_author(path)
     file_info.file_size                    = extract_file_size(os.path.join(path, file_name))
     file_info.duration                     = extract_duration(os.path.join(path, file_name))
-    file_info.languages                    = [extract_language(path)]
+    file_info.languages                    = extract_language(path)
 
     file_info.title                        = extract_title(file_name, [
         file_info.id, token_location, token_date, token_reference, ".mp3"
@@ -76,6 +78,7 @@ def save_output(file_info: FileInfo):
         json.dump(
             {
                 "id": file_info.id,
+                "path": file_info.path,
                 "title": file_info.title,
                 "author": file_info.author,
                 "location": file_info.location,
@@ -91,6 +94,12 @@ def save_output(file_info: FileInfo):
         )
 
 if __name__ == "__main__":
+    # if len(argv) == 2:
+    #     file_name = os.path.basename(argv[1])
+    #     file_path = os.path.dirname(argv[1])
+    #     process_file(file_name, file_path)
+    #     exit(0)
+
     results = process_dir(PATH_INPUT)
     for file_info in results:
         save_output(file_info)

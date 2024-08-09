@@ -14,6 +14,20 @@ SOURCES: list[Source] = [
             'en': { "full": 'Bhagavad Gita', "short": 'BG' },
             'ru': { "full": 'Бхагавад-гита', "short": 'БГ' },
         }),
+    Source(
+        code='sb',
+        aliases=['Ш.Б.', 'ШБ'],
+        canonical_names={
+            'en': { "full": 'Śrīmad-Bhāgavatam', "short": 'SB' },
+            'ru': { "full": 'Шримад Бхагаватам', "short": 'ШБ' },
+        }),
+    Source(
+        code='nod',
+        aliases=['Nectar_of_Devotion', 'Nectar_of_Devotion'],
+        canonical_names={
+            'en': { "full": 'Nectar_of_Devotion', "short": 'NoD' },
+            'ru': { "full": 'Нектар Преданности', "short": 'НП' },
+        }),
 ]
 
 def extract_source(
