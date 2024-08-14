@@ -7,8 +7,9 @@ import json
 
 from modules.meta import AUTHORS, LOCATIONS, SOURCES
 
+LIBRARY_VERSION = "v0001"
 PATH_INPUT  = argv[1] if len(argv) > 1 else "input"
-PATH_OUTPUT = argv[2] if len(argv) > 1 else "output"
+PATH_OUTPUT = argv[2] if len(argv) > 1 else f"../../../content/library-{LIBRARY_VERSION}-data/"
 PATH_POSTFIX_META          = "meta"
 PATH_POSTFIX_META_URL      = "meta.url"
 PATH_POSTFIX_DEEPGRAM      = "deepgram"
@@ -45,7 +46,7 @@ def process_file(
         data_meta     = json.load(buffer_meta)
         data_meta_url = json.load(buffer_meta_url)
         data_track_output = {
-            "_id":        f"track::{file_id}::info",
+            "_id":        f"{file_id}",
             "url":        data_meta_url["url"],
             "title":      data_meta["title"],
             "location":   data_meta["location"],
@@ -84,7 +85,7 @@ def process_file(
         ):
             data_deepgram = json.load(buffer_deepgram)
             data_transcript_output   = {
-                "_id": f"track::{file_id}::transcript::{data_deepgram["request"]["language"]}",
+                "_id": f"{file_id}::{data_deepgram["request"]["language"]}",
                 "text": {
                     "blocks": []
                 }
@@ -158,7 +159,7 @@ def get_files_to_process(path: str) -> list[str]:
     return [ os.path.basename(x)[:24] for x in meta_files ]
 
 if __name__ == "__main__":
-    files = get_files_to_process("output/")
+    files = get_files_to_process(PATH_OUTPUT)
     for file_id in files:
         process_file(file_id)
     process_static_data()
