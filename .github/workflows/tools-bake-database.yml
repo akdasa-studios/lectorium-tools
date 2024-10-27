@@ -1,12 +1,12 @@
 name: Publish
 on:
   push:
-    - main
+    branches:
+      - main
 
 env:
   REGISTRY:      ghcr.io
   DB_IMAGE_NAME: ghcr.io/${{ github.repository }}
-  IMAGE_TAG:     ${{ github.event.release.tag_name }}
 
 
 jobs:
@@ -34,5 +34,5 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: ${{ env.DB_IMAGE_NAME }}-bake-database:${{ env.IMAGE_TAG }},${{ env.DB_IMAGE_NAME }}-bake-database:latest
+          tags: ${{ env.DB_IMAGE_NAME }}-bake-database:latest
           context: ./bake-database
