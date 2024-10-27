@@ -17,5 +17,9 @@ for (const database of databases) {
     outputDB, {
       filter: (doc) => !doc._id.startsWith('_')
     }
-  )
+  ).then((result) => {
+    console.log("Replication succeeded:", result);
+  }).catch((error) => {
+    console.error("Replication failed:", error);
+  });
 }
