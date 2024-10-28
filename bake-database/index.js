@@ -1,3 +1,4 @@
+const fs = require('fs')
 var PouchDB = require('pouchdb')
   .plugin(require('pouchdb-adapter-node-websql'))
 
@@ -13,6 +14,14 @@ for (const database of databases) {
   const inputDB  = new PouchDB(`${baseUri}${database}`)
   const outputDB = new PouchDB(`./artifacts/${database}.db`, { adapter: 'websql' })
 
+
+  // Remove file if it exists
+  const path = `./artifacts/${database}.db`;
+  if (fs.existsSync(path)) {
+    fs.unlinkSync(path);
+  }
+
+  // Replicate the database
   inputDB.replicate.to(
     outputDB, {
       filter: (doc) => !doc._id.startsWith('_')
