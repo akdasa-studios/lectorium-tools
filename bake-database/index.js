@@ -10,16 +10,17 @@ const databases = [
 ]
 
 for (const database of databases) {
-  console.log(`Processing ${database}...`)
-  const inputDB  = new PouchDB(`${baseUri}${database}`)
-  const outputDB = new PouchDB(`./artifacts/${database}.db`, { adapter: 'websql' })
-
-
   // Remove file if it exists
   const path = `./artifacts/${database}.db`;
   if (fs.existsSync(path)) {
+    console.log(`Removing ${database}...`)
     fs.unlinkSync(path);
   }
+
+  // Create the database
+  console.log(`Processing ${database}...`)
+  const inputDB  = new PouchDB(`${baseUri}${database}`)
+  const outputDB = new PouchDB(`./artifacts/${database}.db`, { adapter: 'websql' })
 
   // Replicate the database
   inputDB.replicate.to(
